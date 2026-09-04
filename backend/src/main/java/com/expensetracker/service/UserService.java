@@ -39,11 +39,11 @@ public class UserService implements UserDetailsService {
     @Transactional
     public User registerUser(AuthRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Username is already taken!");
+            throw new IllegalStateException("Username is already taken!");
         }
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email is already in use!");
+            throw new IllegalStateException("Email is already in use!");
         }
 
         User user = User.builder()

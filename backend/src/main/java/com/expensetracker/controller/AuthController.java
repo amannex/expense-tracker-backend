@@ -29,7 +29,11 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody AuthRequest request) {
         User user = userService.registerUser(request);
-        String token = jwtUtil.generateToken(userService.loadUserByUsername(user.getUsername()));
+        String token = jwtUtil.generateToken(
+                userService.loadUserByUsername(user.getUsername()),
+                user.getId(),
+                user.getEmail()
+        );
         
         return ResponseEntity.ok(AuthResponse.builder()
                 .token(token)
@@ -45,8 +49,8 @@ public class AuthController {
         );
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String token = jwtUtil.generateToken(userDetails);
         User user = userService.findByUsername(userDetails.getUsername());
+        String token = jwtUtil.generateToken(userDetails, user.getId(), user.getEmail());
         
         return ResponseEntity.ok(AuthResponse.builder()
                 .token(token)
