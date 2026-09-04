@@ -14,7 +14,6 @@ import {
 } from '@chakra-ui/react';
 import { Expense } from '../../types';
 import { CATEGORY_COLORS, DEFAULT_CATEGORY_COLOR } from '../../constants/categoryColors';
-import { useCurrency } from '../../context/CurrencyContext';
 
 interface CategoryBreakdownProps {
   expenses: Expense[];
