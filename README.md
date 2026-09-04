@@ -75,6 +75,25 @@ npm run dev
 
 The frontend runs at `http://localhost:5173`.
 
+## Split into two GitHub repositories
+
+The application is already isolated into two deployable projects:
+
+- `frontend/` - React/Vite static site
+- `backend/` - Spring Boot API
+
+To publish them as separate repositories, create two empty GitHub repositories and push each directory independently:
+
+```bash
+git subtree split --prefix=frontend -b frontend-repo
+git push <frontend-repository-url> frontend-repo:main
+
+git subtree split --prefix=backend -b backend-repo
+git push <backend-repository-url> backend-repo:main
+```
+
+The frontend is configured for Vercel and the backend for Docker/Render. Configure `VITE_API_URL` in the frontend and the database/JWT/CORS variables documented in `backend/README.md` before deploying.
+
 ## Currency Support
 
 The dashboard supports USD, EUR, GBP, INR, CAD, AUD, and JPY. INR is the default for new users. The selected currency is saved locally and updates dashboard totals, budget progress, category breakdowns, and expense tables.
