@@ -1,124 +1,59 @@
-# Expense Tracker
+# Expense Tracker Backend
 
-A full-stack personal expense management application with a React and TypeScript frontend and a Spring Boot REST API.
+Spring Boot REST API for the Expense Tracker application. The frontend is maintained separately in the [`expense-tracker-frontend`](https://github.com/amannex/expense-tracker-frontend) repository.
 
-## Features
+## Backend features
 
-- JWT-based registration, login, and protected routes
-- Create, edit, delete, and browse expenses
-- Filter expenses by date, date range, and category
-- Dashboard with monthly totals, averages, category breakdown, and recent expenses
-- Monthly budget progress indicator
-- Multi-currency display with persistent currency selection
-- Responsive dashboard layout with Chakra UI
-- MySQL persistence with JPA/Hibernate
+- JWT-based registration and login
+- BCrypt password hashing
+- Protected user-specific expense endpoints
+- Create, read, update, and delete expenses
+- Expense filtering by date, date range, and category
+- MySQL persistence with Spring Data JPA
+- Configurable CORS for the deployed frontend
+- Public `/api/health` endpoint
+- Docker and Render deployment support
 
-## Tech Stack
-
-### Frontend
-
-- React 18
-- TypeScript
-- Vite
-- Chakra UI
-- React Router
-- Axios
-- Day.js
-
-### Backend
+## Technology stack
 
 - Java 17
 - Spring Boot 3
 - Spring Security
-- Spring Data JPA / Hibernate
+- Spring Data JPA and Hibernate
 - MySQL
 - Maven
-- JWT
+- JSON Web Tokens
 
-## Prerequisites
+## Quick start
 
-- Node.js 18 or later
+Requirements:
+
 - Java 17 or later
 - MySQL 8 or later
 
-## Getting Started
-
-### 1. Clone the repository
-
-```bash
-git clone <repository-url>
-cd expense-tracker-app
-```
-
-### 2. Configure MySQL
-
-Update `backend/src/main/resources/application.yml` with the local MySQL username and password. The application uses the `expense_tracker` database and creates it automatically when supported by the configured MySQL connection.
-
-### 3. Start the backend
+Configure the database and JWT variables from [`backend/.env.example`](backend/.env.example), then start the API:
 
 ```bash
 cd backend
-bash mvnw spring-boot:run
+./mvnw spring-boot:run
 ```
 
-The API runs at `http://localhost:8080/api`.
-
-### 4. Start the frontend
-
-In a separate terminal:
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-The frontend runs at `http://localhost:5173`.
-
-## Currency Support
-
-The dashboard supports USD, EUR, GBP, INR, CAD, AUD, and JPY. INR is the default for new users. The selected currency is saved locally and updates dashboard totals, budget progress, category breakdowns, and expense tables.
-
-## API Overview
-
-### Authentication
-
-- `POST /api/auth/register` - Register a user
-- `POST /api/auth/login` - Log in and receive a JWT
-
-### Expenses
-
-- `GET /api/expenses` - Get the current user's expenses
-- `GET /api/expenses/{id}` - Get an expense
-- `POST /api/expenses` - Create an expense
-- `PUT /api/expenses/{id}` - Update an expense
-- `DELETE /api/expenses/{id}` - Delete an expense
-
-### Filtering
-
-- `GET /api/expenses/byDate`
-- `GET /api/expenses/byDateBetween`
-- `GET /api/expenses/byCategory`
-- `GET /api/expenses/byCategoryAndDateRange`
-
-All expense endpoints require a valid bearer token.
-
-## Project Structure
+The API is available at:
 
 ```text
-expense-tracker-app/
-├── backend/
-│   └── src/main/java/com/expensetracker/
-└── frontend/
-    └── src/
-        ├── components/
-        ├── context/
-        ├── constants/
-        ├── pages/
-        ├── services/
-        └── types/
+http://localhost:8080/api
 ```
 
-## License
+Health check:
 
-This project is for personal and educational use.
+```bash
+curl http://localhost:8080/api/health
+```
+
+## Documentation
+
+For complete configuration, API endpoint, Docker, Render deployment, and project structure details, see [`backend/README.md`](backend/README.md).
+
+## Related repository
+
+Frontend: https://github.com/amannex/expense-tracker-frontend
