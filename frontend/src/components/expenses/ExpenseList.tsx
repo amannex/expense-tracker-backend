@@ -22,6 +22,8 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 import { Edit2, Trash } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Expense } from '../../types';
+import { CATEGORY_COLORS, DEFAULT_CATEGORY_COLOR } from '../../constants/categoryColors';
+import { useCurrency } from '../../context/CurrencyContext';
 
 interface ExpenseListProps {
   expenses: Expense[];
@@ -30,42 +32,16 @@ interface ExpenseListProps {
 }
 
 const CategoryBadge = ({ category }: { category: string }) => {
-  let colorScheme;
-  
-  switch (category) {
-    case 'Food':
-      colorScheme = 'green';
-      break;
-    case 'Transportation':
-      colorScheme = 'purple';
-      break;
-    case 'Entertainment':
-      colorScheme = 'pink';
-      break;
-    case 'Housing':
-      colorScheme = 'blue';
-      break;
-    case 'Utilities':
-      colorScheme = 'cyan';
-      break;
-    case 'Healthcare':
-      colorScheme = 'red';
-      break;
-    case 'Education':
-      colorScheme = 'yellow';
-      break;
-    case 'Shopping':
-      colorScheme = 'orange';
-      break;
-    case 'Travel':
-      colorScheme = 'teal';
-      break;
-    default:
-      colorScheme = 'gray';
-  }
+  const colors = CATEGORY_COLORS[category] || DEFAULT_CATEGORY_COLOR;
   
   return (
-    <Badge colorScheme={colorScheme} borderRadius="full" px={2}>
+    <Badge
+      borderRadius="full"
+      px={2}
+      color={colors.text}
+      background={colors.background}
+      fontWeight="bold"
+    >
       {category}
     </Badge>
   );
@@ -75,6 +51,7 @@ const ExpenseList = ({ expenses, onDelete, isLoading = false }: ExpenseListProps
   const toast = useToast();
   const bg = useColorModeValue('white', 'gray.800');
   const hoverBg = useColorModeValue('gray.50', 'gray.700');
+  const { formatCurrency } = useCurrency();
   
   const handleDelete = async (id: string) => {
     try {
@@ -96,13 +73,6 @@ const ExpenseList = ({ expenses, onDelete, isLoading = false }: ExpenseListProps
     }
   };
   
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  };
-  
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -121,7 +91,7 @@ const ExpenseList = ({ expenses, onDelete, isLoading = false }: ExpenseListProps
         <Button
           as={Link}
           to="/expenses/add"
-          colorScheme="blue"
+          colorScheme="brand"
           mt={4}
         >
           Add Expense
@@ -132,7 +102,7 @@ const ExpenseList = ({ expenses, onDelete, isLoading = false }: ExpenseListProps
   
   return (
     <Box overflowX="auto" bg={bg} borderRadius="lg" boxShadow="md">
-      <Table variant="simple">
+      <Table variant="simple" size="sm">
         <Thead>
           <Tr>
             <Th>Description</Th>

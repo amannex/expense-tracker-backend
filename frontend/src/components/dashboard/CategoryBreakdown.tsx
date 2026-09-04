@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import {
   Box,
+  Card,
+  CardBody,
+  CardHeader,
   Heading,
   Text,
-  Flex,
   useColorModeValue,
   Progress,
   VStack,
@@ -11,6 +13,8 @@ import {
   GridItem,
 } from '@chakra-ui/react';
 import { Expense } from '../../types';
+import { CATEGORY_COLORS, DEFAULT_CATEGORY_COLOR } from '../../constants/categoryColors';
+import { useCurrency } from '../../context/CurrencyContext';
 
 interface CategoryBreakdownProps {
   expenses: Expense[];
@@ -23,22 +27,10 @@ interface CategoryData {
   color: string;
 }
 
-const CATEGORY_COLORS: Record<string, string> = {
-  Food: 'green.500',
-  Transportation: 'purple.500',
-  Entertainment: 'pink.500',
-  Housing: 'blue.500',
-  Utilities: 'cyan.500',
-  Healthcare: 'red.500',
-  Education: 'yellow.500',
-  Shopping: 'orange.500',
-  Travel: 'teal.500',
-  Other: 'gray.500',
-};
-
 const CategoryBreakdown = ({ expenses }: CategoryBreakdownProps) => {
   const [categoryData, setCategoryData] = useState<CategoryData[]>([]);
   const bgColor = useColorModeValue('white', 'gray.800');
+  const { formatCurrency } = useCurrency();
   
   useEffect(() => {
     if (expenses.length === 0) {
@@ -62,77 +54,76 @@ const CategoryBreakdown = ({ expenses }: CategoryBreakdownProps) => {
         name,
         amount,
         percentage: (amount / totalAmount) * 100,
-        color: CATEGORY_COLORS[name] || 'gray.500',
+        color: (CATEGORY_COLORS[name] || DEFAULT_CATEGORY_COLOR).text,
       }))
       .sort((a, b) => b.amount - a.amount);
     
     setCategoryData(data);
   }, [expenses]);
   
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  };
-  
   if (expenses.length === 0) {
     return (
-      <Box
+      <Card
         bg={bgColor}
-        p={6}
-        borderRadius="lg"
-        boxShadow="md"
         height="100%"
+        variant="outline"
+        borderColor="gray.100"
       >
-        <Heading size="md" mb={4}>
-          Category Breakdown
-        </Heading>
-        <Text color="gray.500">No expense data available</Text>
-      </Box>
+        <CardHeader pb={0}>
+          <Heading size="md">Category Breakdown</Heading>
+        </CardHeader>
+        <CardBody>
+          <Text color="gray.500">No expense data available</Text>
+        </CardBody>
+      </Card>
     );
   }
   
   return (
-    <Box
+    <Card
       bg={bgColor}
-      p={6}
-      borderRadius="lg"
-      boxShadow="md"
       height="100%"
+      variant="outline"
+      borderColor="gray.100"
     >
-      <Heading size="md" mb={6}>
-        Category Breakdown
-      </Heading>
+      <CardHeader pb={0}>
+        <Heading size="md">Category Breakdown</Heading>
+      </CardHeader>
+      <CardBody>
       
       <VStack spacing={4} align="stretch">
         {categoryData.map((category) => (
           <Box key={category.name}>
             <Grid templateColumns="1fr auto auto" gap={2} mb={1}>
               <GridItem>
-                <Text fontWeight="medium">{category.name}</Text>
+                <Text fontSize="sm" fontWeight="semibold">{category.name}</Text>
               </GridItem>
               <GridItem>
-                <Text fontWeight="bold" color={category.color}>
+                <Text fontSize="sm" fontWeight="bold" color={category.color}>
                   {formatCurrency(category.amount)}
                 </Text>
               </GridItem>
               <GridItem>
-                <Text fontSize="sm" color="gray.500">
+                <Text fontSize="xs" color="gray.500">
                   {category.percentage.toFixed(1)}%
                 </Text>
               </GridItem>
             </Grid>
             <Progress
               value={category.percentage}
-              colorScheme={category.color.split('.')[0]}
               size="sm"
               borderRadius="full"
+              sx={{
+                '& > div': {
+                  background: category.color,
+                },
+              }}
             />
           </Box>
         ))}
       </VStack>
-    </Box>
+      </CardBody>
+    </Card>
   );
 };
 

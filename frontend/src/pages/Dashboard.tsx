@@ -1,17 +1,25 @@
 import { useState, useEffect } from 'react';
 import {
   Box,
+  Card,
+  CardBody,
+  CardHeader,
   Grid,
   GridItem,
   Heading,
   Button,
   HStack,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
   useToast,
   Text,
   SimpleGrid,
   useBreakpointValue,
 } from '@chakra-ui/react';
 import { PlusIcon } from 'lucide-react';
+import { CheckIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import { Link } from 'react-router-dom';
 import ExpenseSummary from '../components/dashboard/ExpenseSummary';
 import CategoryBreakdown from '../components/dashboard/CategoryBreakdown';
@@ -19,12 +27,14 @@ import ExpenseList from '../components/expenses/ExpenseList';
 import { expenseService } from '../services/api';
 import { Expense } from '../types';
 import dayjs from 'dayjs';
+import { CURRENCIES, useCurrency } from '../context/CurrencyContext';
 
 const Dashboard = () => {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [recentExpenses, setRecentExpenses] = useState<Expense[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const toast = useToast();
+  const { currency, setCurrency } = useCurrency();
   
   const gridColumns = useBreakpointValue({ base: 1, md: 3 });
   
@@ -85,17 +95,57 @@ const Dashboard = () => {
   return (
     <Box>
       <HStack justify="space-between" mb={6}>
-        <Heading as="h1" size="xl">
-          Dashboard
-        </Heading>
-        <Button
-          as={Link}
-          to="/expenses/add"
-          leftIcon={<PlusIcon size={18} />}
-          colorScheme="blue"
-        >
-          Add Expense
-        </Button>
+        <Box>
+          <Text
+            color="brand.600"
+            fontSize="xs"
+            fontWeight="bold"
+            letterSpacing="0.08em"
+            textTransform="uppercase"
+            mb={0}
+            lineHeight="1.2"
+          >
+            Welcome back
+          </Text>
+          <Heading as="h1" size="xl" mt={1} lineHeight="1.1">
+            Dashboard
+          </Heading>
+        </Box>
+        <HStack spacing={3}>
+          <Menu placement="bottom-end">
+            <MenuButton
+              as={Button}
+              size="md"
+              width={{ base: '100px', md: '125px' }}
+              borderRadius="lg"
+              bg="white"
+              variant="outline"
+              rightIcon={<ChevronDownIcon />}
+              aria-label="Select currency"
+            >
+              {CURRENCIES.find((option) => option.code === currency)?.symbol} {currency}
+            </MenuButton>
+            <MenuList zIndex={10}>
+              {CURRENCIES.map((option) => (
+                <MenuItem
+                  key={option.code}
+                  icon={option.code === currency ? <CheckIcon /> : undefined}
+                  onClick={() => setCurrency(option.code)}
+                >
+                  {option.symbol} {option.code}
+                </MenuItem>
+              ))}
+            </MenuList>
+          </Menu>
+          <Button
+            as={Link}
+            to="/expenses/add"
+            leftIcon={<PlusIcon size={18} />}
+            colorScheme="brand"
+          >
+            Add Expense
+          </Button>
+        </HStack>
       </HStack>
       
       <ExpenseSummary expenses={monthlyExpenses} period="month" />
@@ -106,10 +156,11 @@ const Dashboard = () => {
         mb={6}
       >
         <GridItem>
-          <Box bg="white" p={6} borderRadius="lg" boxShadow="md">
-            <Heading size="md" mb={4}>
-              Recent Expenses
-            </Heading>
+          <Card bg="white" variant="outline" borderColor="gray.100" minH="252px">
+            <CardHeader pb={1}>
+              <Heading size="md">Recent Expenses</Heading>
+            </CardHeader>
+            <CardBody pt={4}>
             <ExpenseList
               expenses={recentExpenses}
               onDelete={handleDelete}
@@ -121,14 +172,15 @@ const Dashboard = () => {
                   as={Link}
                   to="/expenses"
                   variant="outline"
-                  colorScheme="blue"
+                  colorScheme="brand"
                   size="sm"
                 >
                   View All Expenses
                 </Button>
               </Box>
             )}
-          </Box>
+            </CardBody>
+          </Card>
         </GridItem>
         
         <GridItem>
